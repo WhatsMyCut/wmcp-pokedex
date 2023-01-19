@@ -1,0 +1,32 @@
+{
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#ce8e73",
+    "activityBar.background": "#ce8e73",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#297640",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#ce8e73",
+    "statusBar.background": "#c16f4d",
+    "statusBar.debuggingBackground": "#4d9fc1",
+    "statusBar.debuggingForeground": "#15202b",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#a25839",
+    "statusBarItem.remoteBackground": "#c16f4d",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#c16f4d",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#c16f4d99",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "peacock.color": "#c16f4d",
+  "editor.codeActionsOnSave": {
+
+  },
+  "jest.jestCommandLine": "/Users/mike/Development/GIT/wmcp-laravel/src/Refersion-HQ/node_modules/.bin/jest",
+  "jest.rootPath": ".",
+  "cSpell.words": [
+    "pokedex"
+  ]
+}
