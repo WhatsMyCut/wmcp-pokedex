@@ -7,7 +7,7 @@ function PokeDex(): JSX.Element {
       <header className="App-header">
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
-          <img src={logo} alt="logo" />
+          <img src={logo} alt="logo" className="App-logo" />
         </p>
         <a
           className="App-link"
