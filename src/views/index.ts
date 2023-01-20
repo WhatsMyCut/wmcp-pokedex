@@ -1,3 +1,3 @@
-import PokeDex from './PokeDex';
+import Dashboard from './Dashboard';
 
-export { PokeDex };
+export { Dashboard };
