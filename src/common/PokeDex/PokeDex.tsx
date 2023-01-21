@@ -1,7 +1,11 @@
 import React from 'react';
+import { NamedAPIResource } from 'pokenode-ts';
 import './PokeDex.scss';
+interface Props {
+  data: NamedAPIResource[];
+}
 
-function PokeDex(): JSX.Element {
+function PokeDex(props: Props): JSX.Element {
   return (
     <div className="App">
       Pokedex
@@ -17,7 +21,7 @@ function PokeDex(): JSX.Element {
               />
             </svg>
             <div className="lights-container">
-              <div className="big-light-boarder">
+              <div className="big-light-border">
                 <div className="big-light blue">
                   <div className="big-dot light-blue"></div>
                 </div>
@@ -171,6 +175,7 @@ function PokeDex(): JSX.Element {
           </div>
         </div>
       </div>
+      <div>{JSON.stringify(props.data)}</div>
     </div>
   );
 }

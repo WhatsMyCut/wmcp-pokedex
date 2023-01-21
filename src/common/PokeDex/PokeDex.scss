@@ -2,7 +2,7 @@
 
 /* poke-dex */
 #pokedex {
-  height: 342px;
+  height: 465px;
   width: calc(228px * 2);
   display: flex;
   border-radius: 10px;
@@ -32,16 +32,17 @@
 .lights-container {
   position: relative;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
 }
 
 .left-svg {
   position: absolute;
   z-index: +5;
+  left: 270px;
 }
 
-.big-light-boarder {
+.big-light-border {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,7 +76,7 @@
   width: 70px;
   height: 100%;
   display: flex;
-  align-self: start;
+  align-self: flex-start;
   justify-content: space-around;
 }
 
@@ -223,7 +224,7 @@
 .upper-buttons-container {
   display: flex;
   align-items: top;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 .long-buttons-container {
@@ -361,6 +362,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  border-right: solid black 3px;
 }
 .right-panel-screen {
   font-family: 'Press Start 2P', cursive;
@@ -399,6 +401,7 @@
   border: black 1.5px solid;
   background-color: var(--square-buttons-color);
   box-shadow: inset -2px -2px #3298cb;
+  cursor: pointer;
 }
 
 /* center buttons */
@@ -414,7 +417,7 @@
 .small-reds-container {
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
 }
 .small-reds-container .small-light {
   border: solid black 2px;
