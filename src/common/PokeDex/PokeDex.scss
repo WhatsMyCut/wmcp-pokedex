@@ -137,7 +137,7 @@
   background-color: var(--main-screen-bg-color);
   border: solid black 2px;
   border-radius: 5%;
-  background-image: url(https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png);
+  background-image: var(--main-bg-image);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -208,9 +208,10 @@
 
 #name-screen {
   width: 100%;
-  font-family: 'Press Start 2P', cursive;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
   text-align: center;
-  font-size: 8.5px;
+  font-size: 11px;
   overflow-wrap: break-word;
 }
 
@@ -365,13 +366,14 @@
   border-right: solid black 3px;
 }
 .right-panel-screen {
-  font-family: 'Press Start 2P', cursive;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
   width: 146px;
   height: 64px;
   background-color: var(--secondary-screen-bg-color);
   border: solid black 2px;
   border-radius: 4px;
-  font-size: xx-small;
+  font-size: small;
   padding-left: 2px;
   padding-right: 2px;
   display: flex;
@@ -396,12 +398,17 @@
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, 1fr);
 }
+
 .blue-square {
   border-radius: 2px;
   border: black 1.5px solid;
   background-color: var(--square-buttons-color);
   box-shadow: inset -2px -2px #3298cb;
-  cursor: pointer;
+  & > :hover {
+    cursor: pointer;
+  }
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
 }
 
 /* center buttons */
@@ -440,12 +447,15 @@
 }
 
 .white-square {
-  width: 25px;
+  display: flex;
+  width: 40px;
   height: 25px;
   border-radius: 5px;
   border: black 2px solid;
   background-color: #ffffff;
   box-shadow: inset -2px -2px gray;
+  font-size: 11px;
+  text-align: center;
 }
 
 .center-right-container {

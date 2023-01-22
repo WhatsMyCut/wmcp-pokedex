@@ -1,11 +1,60 @@
-import React from 'react';
-import { NamedAPIResource } from 'pokenode-ts';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  MouseEventHandler,
+} from 'react';
+import { Pokemon, PokemonClient } from 'pokenode-ts';
+
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { setCurrentPokemon } from '../../store/pokemonSlice';
 import './PokeDex.scss';
 interface Props {
-  data: NamedAPIResource[];
+  // data: NamedAPIResource[];
+  client: PokemonClient;
 }
 
 function PokeDex(props: Props): JSX.Element {
+  const dispatch = useAppDispatch();
+  const selected = useAppSelector((state) => state.pokemon.selected);
+  const isLoading = useRef<boolean>(false);
+  const [pokemon, setPokemon] = useState<Pokemon | undefined>(undefined);
+
+  const setBGImage = (imgSrc: string | null) => {
+    console.log({ imgSrc });
+    document.documentElement.style.backgroundImage = imgSrc || '';
+  };
+
+  const handleUpButton = useCallback((event: MouseEventHandler<HTMLDivElement, MouseEvent>) => {
+    console.log('handleUpButton', { event });
+    if (event.clientY < 389) {
+      console.log('handleUp')
+    }
+    if (event.clientY > 415) {
+      console.log('handleDown')
+    }
+  }, []);
+
+  const
+
+  useEffect(() => {
+    if (selected.name !== '' && selected.name !== pokemon?.name) {
+      console.log({ selected });
+      const api = new PokemonClient();
+      isLoading.current = true;
+      api
+        .getPokemonByName(selected?.name)
+        .then((pk) => {
+          setPokemon(pk);
+          setBGImage(pk?.sprites?.front_default);
+          dispatch(setCurrentPokemon(pk));
+          isLoading.current = false;
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [selected]);
+
   return (
     <div className="App">
       Pokedex
@@ -46,7 +95,23 @@ function PokeDex(props: Props): JSX.Element {
                 <div className="mini-light red"></div>
                 <div className="mini-light red"></div>
               </div>
-              <div id="main-screen"></div>
+              <div id="main-screen">
+                {isLoading.current && <>Initializing...</>}
+                {!isLoading.current && (
+                  <img
+                    src={
+                      pokemon?.sprites?.versions['generation-i'].yellow
+                        .front_default || ''
+                    }
+                    alt={pokemon?.name}
+                    style={{
+                      height: '106px',
+                      width: '108px',
+                      backgroundSize: 'contain',
+                    }}
+                  />
+                )}
+              </div>
               <div className="bottom-screen-lights">
                 <div className="small-light red">
                   <div className="dot light-red"></div>
@@ -75,12 +140,15 @@ function PokeDex(props: Props): JSX.Element {
                 <div>.</div>
               </div>
               <div className="green-screen">
-                <span id="name-screen">bulbasaur</span>
+                <span id="name-screen">{pokemon?.name || '-'}</span>
               </div>
               <div className="right-nav-container">
                 <div className="nav-button">
                   <div className="nav-center-circle"></div>
-                  <div className="nav-button-vertical"></div>
+                  <button
+                    className="nav-button-vertical"
+                    onClick={handleUpButton}
+                  />
                   <div className="nav-button-horizontal">
                     <div className="border-top"></div>
                     <div className="border-bottom"></div>
@@ -120,22 +188,24 @@ function PokeDex(props: Props): JSX.Element {
           {/*  Top screen */}
           <div className="top-screen-container">
             <div id="about-screen" className="right-panel-screen">
-              Height: 70cm Weight: 6.9kg
+              {'Height:'} {pokemon?.height ? pokemon?.height + 'cm' : '-'}
+              <br />
+              {'Weight:'} {pokemon?.weight ? pokemon?.weight + 'kg' : '-'}
             </div>
           </div>
           {/*  Blue Buttons */}
           <div className="square-buttons-container">
             <div className="blue-squares-container">
-              <div className="blue-square"></div>
-              <div className="blue-square"></div>
-              <div className="blue-square"></div>
-              <div className="blue-square"></div>
-              <div className="blue-square"></div>
-              <div className="blue-square"></div>
-              <div className="blue-square"></div>
-              <div className="blue-square"></div>
-              <div className="blue-square"></div>
-              <div className="blue-square"></div>
+              <div className="blue-square">A</div>
+              <div className="blue-square">B</div>
+              <div className="blue-square">C</div>
+              <div className="blue-square">D</div>
+              <div className="blue-square">E</div>
+              <div className="blue-square">0</div>
+              <div className="blue-square">1</div>
+              <div className="blue-square">2</div>
+              <div className="blue-square">3</div>
+              <div className="blue-square">4</div>
             </div>
           </div>
           {/*  Center Buttons */}
@@ -150,8 +220,8 @@ function PokeDex(props: Props): JSX.Element {
                 </div>
               </div>
               <div className="white-squares-container">
-                <div className="white-square"></div>
-                <div className="white-square"></div>
+                <div className="white-square">Search</div>
+                <div className="white-square">Clear</div>
               </div>
             </div>
             <div className="center-right-container">
@@ -170,12 +240,12 @@ function PokeDex(props: Props): JSX.Element {
               grass
             </div>
             <div id="id-screen" className="right-panel-screen">
-              #1
+              {pokemon?.id ? '#' + pokemon?.id : '-'}
             </div>
           </div>
         </div>
       </div>
-      <div>{JSON.stringify(props.data)}</div>
+      {/* <div>{JSON.stringify(pokemon)}</div> */}
     </div>
   );
 }

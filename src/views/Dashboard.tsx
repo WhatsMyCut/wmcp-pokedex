@@ -1,38 +1,34 @@
 import React, { useEffect } from 'react';
-import { PokemonClient } from 'pokenode-ts';
-import { useAppSelector, useAppDispatch } from '../hooks';
-import { setCurrentPayload } from '../store/pokemonSlice';
+import {
+  setCurrentPayload,
+  setCurrentPokemon,
+  setSelected,
+} from '../store/pokemonSlice';
+import { useAppDispatch, useAppSelector } from '../hooks';
 
 import { PokeDex } from '../common/index';
+import { PokemonClient } from 'pokenode-ts';
 
 function Dashboard(): JSX.Element {
+  const api = new PokemonClient();
   const dispatch = useAppDispatch();
-  const selector = useAppSelector((state) => state.pokemon.data);
+  const data = useAppSelector((state) => state.pokemon.data);
+  const selected = useAppSelector((state) => state.pokemon.selected);
 
   useEffect(() => {
-    const api = new PokemonClient();
-    api
-      .listPokemons()
-      .then((data) => {
-        console.log(data.results);
-        dispatch(setCurrentPayload(data.results));
-      })
-      .catch((error) => console.error(error));
-
-    //   fetch('https://pokeapi.co/docs/v2', {
-    //     method: 'GET',
-    //     mode: 'no-cors',
-    //     headers: {
-    //       'Content-Type': 'text/html',
-    //     },
-    //   })
-    //     .then((result) => result.json())
-    //     .then((data) => {
-    //       console.log({ data });
-    //     })
-    //     .catch((e) => console.log({ e }));
+    if (!data.length) {
+      api
+        .listPokemons()
+        .then((data) => {
+          dispatch(setCurrentPayload(data.results));
+          if (selected.name !== data.results[0].name) {
+            dispatch(setSelected(data.results[0]));
+          }
+        })
+        .catch((error) => console.error(error));
+    }
   }, []);
 
-  return <PokeDex data={selector} />;
+  return <PokeDex client={api} />;
 }
 export default Dashboard;
