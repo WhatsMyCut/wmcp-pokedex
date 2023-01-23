@@ -35,10 +35,17 @@ export const pokemonSlice = createSlice({
     setCurrentPokemon: (state, action: PayloadAction<Pokemon>) => {
       state.currentPokemon = action.payload;
     },
+    setNewPokemon: (state, action) => {
+      state.data?.results.push(action.payload);
+    },
   },
 });
 
-export const { setCurrentPayload, setCurrentPokemon, setSelected } =
-  pokemonSlice.actions;
+export const {
+  setCurrentPayload,
+  setCurrentPokemon,
+  setSelected,
+  setNewPokemon,
+} = pokemonSlice.actions;
 
 export default pokemonSlice.reducer;

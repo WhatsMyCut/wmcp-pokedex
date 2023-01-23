@@ -2,43 +2,78 @@ import React, { useEffect, useRef, useState, MouseEventHandler } from 'react';
 import { Pokemon, PokemonClient } from 'pokenode-ts';
 
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { setCurrentPokemon, setSelected } from '../../store/pokemonSlice';
+import {
+  setCurrentPayload,
+  setCurrentPokemon,
+  setNewPokemon,
+  setSelected,
+} from '../../store/pokemonSlice';
 import './PokeDex.scss';
 
 const PokeDex = (): JSX.Element => {
+  const api = new PokemonClient();
   const dispatch = useAppDispatch();
   const selected = useAppSelector((state) => state.pokemon.selected);
   const data = useAppSelector((state) => state.pokemon.data);
-  const isLoading = useRef<boolean>(false);
+  const isLoading = useRef<boolean>(true);
   const [pokemon, setPokemon] = useState<Pokemon | undefined>(undefined);
 
   const setBGImage = (imgSrc: string | null) => {
-    console.log({ imgSrc });
-    document.documentElement.style.backgroundImage = imgSrc || '';
+    document.documentElement.style.setProperty('--main-bg-image', imgSrc || '');
+  };
+
+  const handleDownKey = () => {
+    if (data && data.results) {
+      const idx = data.results.indexOf(selected);
+      if (idx - 1 >= 0) {
+        dispatch(setSelected(data.results[idx - 1]));
+      }
+    }
   };
 
   const handleUpKey = () => {
     if (data && data.results) {
       const idx = data.results.indexOf(selected);
-      if (idx + 1 > data.results.length) {
+
+      if (idx + 1 <= data.results.length - 1) {
         dispatch(setSelected(data.results[idx + 1]));
+      } else {
+        if (data.next) {
+          const options = data.next
+            .replace('https://pokeapi.co/api/v2/pokemon?', '')
+            .replaceAll('=', ': ')
+            .replaceAll('&', ', ')
+            .split(', ');
+          const offset = Number(options[0].replace('offset: ', ''));
+          api.listPokemons(offset).then((res) => {
+            dispatch(setSelected(res.results[0]));
+            const combined = data.results.concat(res.results);
+            const allData = {
+              count: res.count,
+              next: res.next,
+              previous: res.previous,
+              results: combined,
+            };
+            console.log(data.results, res.results, combined);
+            dispatch(setCurrentPayload(allData));
+          });
+        }
       }
     }
   };
 
-  const handleUpButton = (event: React.MouseEvent) => {
+  const handleButton = (event: React.MouseEvent) => {
     if (event.clientY < 389) {
       handleUpKey();
     }
     if (event.clientY > 415) {
-      console.log('handleDown');
+      handleDownKey();
     }
   };
 
   useEffect(() => {
     if (selected.name !== '' && selected.name !== pokemon?.name) {
       console.log({ selected });
-      const api = new PokemonClient();
       isLoading.current = true;
       api
         .getPokemonByName(selected?.name)
@@ -142,10 +177,7 @@ const PokeDex = (): JSX.Element => {
               <div className="right-nav-container">
                 <div className="nav-button">
                   <div className="nav-center-circle"></div>
-                  <div
-                    className="nav-button-vertical"
-                    onClick={handleUpButton}
-                  />
+                  <div className="nav-button-vertical" onClick={handleButton} />
                   <div className="nav-button-horizontal">
                     <div className="border-top"></div>
                     <div className="border-bottom"></div>
@@ -217,8 +249,8 @@ const PokeDex = (): JSX.Element => {
                 </div>
               </div>
               <div className="white-squares-container">
-                <div className="white-square">Search</div>
-                <div className="white-square">Clear</div>
+                <div className="white-square"></div>
+                <div className="white-square"></div>
               </div>
             </div>
             <div className="center-right-container">
@@ -234,7 +266,9 @@ const PokeDex = (): JSX.Element => {
           {/*  Bottom screens */}
           <div className="bottom-screens-container">
             <div id="type-screen" className="right-panel-screen">
-              grass
+              {pokemon?.types[0]?.type?.name
+                ? pokemon?.types[0]?.type?.name
+                : '-'}
             </div>
             <div id="id-screen" className="right-panel-screen">
               {pokemon?.id ? '#' + pokemon?.id : '-'}
