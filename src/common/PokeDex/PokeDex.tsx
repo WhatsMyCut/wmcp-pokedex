@@ -1,23 +1,14 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  MouseEventHandler,
-} from 'react';
+import React, { useEffect, useRef, useState, MouseEventHandler } from 'react';
 import { Pokemon, PokemonClient } from 'pokenode-ts';
 
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { setCurrentPokemon } from '../../store/pokemonSlice';
+import { setCurrentPokemon, setSelected } from '../../store/pokemonSlice';
 import './PokeDex.scss';
-interface Props {
-  // data: NamedAPIResource[];
-  client: PokemonClient;
-}
 
-function PokeDex(props: Props): JSX.Element {
+const PokeDex = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const selected = useAppSelector((state) => state.pokemon.selected);
+  const data = useAppSelector((state) => state.pokemon.data);
   const isLoading = useRef<boolean>(false);
   const [pokemon, setPokemon] = useState<Pokemon | undefined>(undefined);
 
@@ -26,17 +17,23 @@ function PokeDex(props: Props): JSX.Element {
     document.documentElement.style.backgroundImage = imgSrc || '';
   };
 
-  const handleUpButton = useCallback((event: MouseEventHandler<HTMLDivElement, MouseEvent>) => {
-    console.log('handleUpButton', { event });
+  const handleUpKey = () => {
+    if (data && data.results) {
+      const idx = data.results.indexOf(selected);
+      if (idx + 1 > data.results.length) {
+        dispatch(setSelected(data.results[idx + 1]));
+      }
+    }
+  };
+
+  const handleUpButton = (event: React.MouseEvent) => {
     if (event.clientY < 389) {
-      console.log('handleUp')
+      handleUpKey();
     }
     if (event.clientY > 415) {
-      console.log('handleDown')
+      console.log('handleDown');
     }
-  }, []);
-
-  const
+  };
 
   useEffect(() => {
     if (selected.name !== '' && selected.name !== pokemon?.name) {
@@ -145,7 +142,7 @@ function PokeDex(props: Props): JSX.Element {
               <div className="right-nav-container">
                 <div className="nav-button">
                   <div className="nav-center-circle"></div>
-                  <button
+                  <div
                     className="nav-button-vertical"
                     onClick={handleUpButton}
                   />
@@ -248,6 +245,6 @@ function PokeDex(props: Props): JSX.Element {
       {/* <div>{JSON.stringify(pokemon)}</div> */}
     </div>
   );
-}
+};
 
 export default PokeDex;

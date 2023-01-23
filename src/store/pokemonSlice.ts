@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Pokemon } from 'pokenode-ts';
+import { NamedAPIResourceList, Pokemon } from 'pokenode-ts';
 
 // Define a type for the slice state
 interface NamedAPIResource {
@@ -10,7 +10,7 @@ interface NamedAPIResource {
 interface DataState {
   currentPokemon: Pokemon | undefined;
   selected: NamedAPIResource;
-  data: NamedAPIResource[];
+  data: NamedAPIResourceList | undefined;
   viewHistory: [];
 }
 
@@ -18,7 +18,7 @@ interface DataState {
 const initialState: DataState = {
   currentPokemon: undefined,
   selected: { name: '', url: '' },
-  data: [],
+  data: undefined,
   viewHistory: [],
 };
 
@@ -26,7 +26,7 @@ export const pokemonSlice = createSlice({
   name: 'pokemon',
   initialState,
   reducers: {
-    setCurrentPayload: (state, action: PayloadAction<NamedAPIResource[]>) => {
+    setCurrentPayload: (state, action: PayloadAction<NamedAPIResourceList>) => {
       state.data = action.payload;
     },
     setSelected: (state, action: PayloadAction<NamedAPIResource>) => {

@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  setCurrentPayload,
-  setCurrentPokemon,
-  setSelected,
-} from '../store/pokemonSlice';
+import { setCurrentPayload, setSelected } from '../store/pokemonSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
 
 import { PokeDex } from '../common/index';
@@ -16,11 +12,11 @@ function Dashboard(): JSX.Element {
   const selected = useAppSelector((state) => state.pokemon.selected);
 
   useEffect(() => {
-    if (!data.length) {
+    if (!data) {
       api
         .listPokemons()
         .then((data) => {
-          dispatch(setCurrentPayload(data.results));
+          dispatch(setCurrentPayload(data));
           if (selected.name !== data.results[0].name) {
             dispatch(setSelected(data.results[0]));
           }
@@ -29,6 +25,6 @@ function Dashboard(): JSX.Element {
     }
   }, []);
 
-  return <PokeDex client={api} />;
+  return <PokeDex />;
 }
 export default Dashboard;
