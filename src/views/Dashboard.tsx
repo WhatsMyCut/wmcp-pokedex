@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { setCurrentPayload, setSelected } from '../store/pokemonSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
 
-import { PokeDex } from '../common/index';
+import { PokeDex, ViewHistory } from '../common/index';
 import { PokemonClient } from 'pokenode-ts';
 
 function Dashboard(): JSX.Element {
@@ -25,6 +25,17 @@ function Dashboard(): JSX.Element {
     }
   }, []);
 
-  return <PokeDex />;
+  return (
+    <>
+      <div className="container">
+        <div>
+          <PokeDex />
+        </div>
+        <div>
+          <ViewHistory />
+        </div>
+      </div>
+    </>
+  );
 }
 export default Dashboard;

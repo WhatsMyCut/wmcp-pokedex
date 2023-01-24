@@ -39,7 +39,7 @@
 .left-svg {
   position: absolute;
   z-index: +5;
-  left: 270px;
+  left: 120px;
 }
 
 .big-light-border {
@@ -193,6 +193,8 @@
   height: 2px;
   border-radius: 50px;
   border: 2px solid black;
+  z-index: 5;
+  cursor: pointer;
 }
 
 .green-screen {
@@ -459,6 +461,7 @@
   text-align: center;
   vertical-align: baseline;
   z-index: 5;
+  padding: 3px;
   cursor: pointer;
 }
 

@@ -11,7 +11,7 @@ interface DataState {
   currentPokemon: Pokemon | undefined;
   selected: NamedAPIResource;
   data: NamedAPIResourceList | undefined;
-  viewHistory: [];
+  viewHistory: NamedAPIResource[];
 }
 
 // Define the initial state using that type
@@ -31,6 +31,7 @@ export const pokemonSlice = createSlice({
     },
     setSelected: (state, action: PayloadAction<NamedAPIResource>) => {
       state.selected = action.payload;
+      state.viewHistory.push(action.payload);
     },
     setCurrentPokemon: (state, action: PayloadAction<Pokemon>) => {
       state.currentPokemon = action.payload;

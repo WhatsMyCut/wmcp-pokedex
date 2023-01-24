@@ -1,2 +1,3 @@
 import PokeDex from './PokeDex/PokeDex';
-export { PokeDex };
+import ViewHistory from './ViewHistory/ViewHistory';
+export { PokeDex, ViewHistory };

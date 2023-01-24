@@ -226,7 +226,7 @@ const PokeDex = (): JSX.Element => {
                 {!isLoading.current && (
                   <img
                     src={
-                      pokemon?.sprites?.versions['generation-ii'].crystal
+                      pokemon?.sprites?.versions['generation-i']['red-blue']
                         .front_default || ''
                     }
                     alt={pokemon?.name}
@@ -256,8 +256,11 @@ const PokeDex = (): JSX.Element => {
             <div className="upper-buttons-container">
               <div className="big-button"></div>
               <div className="long-buttons-container">
-                <div className="long-button red"></div>
-                <div className="long-button light-blue"></div>
+                <div className="long-button red" onClick={handleDownKey}></div>
+                <div
+                  className="long-button light-blue"
+                  onClick={handleUpKey}
+                ></div>
               </div>
             </div>
             <div className="nav-buttons-container">
