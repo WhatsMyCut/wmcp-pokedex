@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState, MouseEventHandler } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Pokemon, PokemonClient } from 'pokenode-ts';
 
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
   setCurrentPayload,
   setCurrentPokemon,
-  setNewPokemon,
   setSelected,
 } from '../../store/pokemonSlice';
+import { searchButton } from './utils';
 import './PokeDex.scss';
 
 const PokeDex = (): JSX.Element => {
@@ -16,7 +16,12 @@ const PokeDex = (): JSX.Element => {
   const selected = useAppSelector((state) => state.pokemon.selected);
   const data = useAppSelector((state) => state.pokemon.data);
   const isLoading = useRef<boolean>(true);
+  const [displayScreen, setDisplayScreen] = useState<
+    'search' | 'searchresults' | 'abilities' | 'moves' | 'default'
+  >('default');
+  const [searchMode, setSearchMode] = useState<number>(0);
   const [pokemon, setPokemon] = useState<Pokemon | undefined>(undefined);
+  const [searchString, setSearchString] = useState<string>('');
 
   const setBGImage = (imgSrc: string | null) => {
     document.documentElement.style.setProperty('--main-bg-image', imgSrc || '');
@@ -54,7 +59,6 @@ const PokeDex = (): JSX.Element => {
               previous: res.previous,
               results: combined,
             };
-            console.log(data.results, res.results, combined);
             dispatch(setCurrentPayload(allData));
           });
         }
@@ -71,9 +75,99 @@ const PokeDex = (): JSX.Element => {
     }
   };
 
+  const handleHButton = (event: React.MouseEvent) => {
+    if (event.clientX < 440) {
+      console.log('left');
+    }
+    if (event.clientX > 460) {
+      console.log('right');
+    }
+  };
+
+  const showSearch = () => {
+    console.log('showSearch');
+    if (displayScreen === 'search') {
+      setDisplayScreen('searchresults');
+    } else {
+      setDisplayScreen('search');
+    }
+  };
+
+  const clearSearch = () => {
+    console.log('clearSearch');
+    setDisplayScreen('default');
+    setSearchString('');
+  };
+
+  const handleLeftSearchButton = () => {
+    if (searchMode - 1 >= 0) {
+      setSearchMode(searchMode - 1);
+    }
+  };
+
+  const handleRightSearchButton = () => {
+    if (searchMode + 1 <= 5) {
+      setSearchMode(searchMode + 1);
+    }
+  };
+
+  const handleSearchButton = (index: number) => {
+    if (displayScreen !== 'search') return;
+    const letter = searchButton(index, searchMode);
+    const ss = searchString || '';
+    console.log({ letter, ss });
+    setSearchString(ss + letter?.toLowerCase());
+  };
+
+  const defaultScreen = useCallback(() => {
+    return (
+      <>
+        {'Height:'} {pokemon?.height ? pokemon?.height + 'cm' : '-'}
+        <br />
+        {'Weight:'} {pokemon?.weight ? pokemon?.weight + 'kg' : '-'}
+      </>
+    );
+  }, [pokemon]);
+
+  const searchScreen = () => {
+    return (
+      <>
+        {'Search:'}
+        <br />
+        {searchString || '-'}
+      </>
+    );
+  };
+
+  const searchResultsScreen = () => {
+    const results = data?.results.filter(
+      (pok) => pok.name.indexOf(searchString) !== -1
+    );
+    return (
+      <>
+        {'Search Results:'}
+        <br />
+        {results && results[0] && results[0].name}
+      </>
+    );
+  };
+
+  const aboutScreen = () => {
+    switch (displayScreen) {
+      case 'search':
+        return searchScreen();
+        break;
+      case 'searchresults':
+        return searchResultsScreen();
+        break;
+      default:
+        return defaultScreen();
+        break;
+    }
+  };
+
   useEffect(() => {
     if (selected.name !== '' && selected.name !== pokemon?.name) {
-      console.log({ selected });
       isLoading.current = true;
       api
         .getPokemonByName(selected?.name)
@@ -132,7 +226,7 @@ const PokeDex = (): JSX.Element => {
                 {!isLoading.current && (
                   <img
                     src={
-                      pokemon?.sprites?.versions['generation-i'].yellow
+                      pokemon?.sprites?.versions['generation-ii'].crystal
                         .front_default || ''
                     }
                     alt={pokemon?.name}
@@ -178,7 +272,10 @@ const PokeDex = (): JSX.Element => {
                 <div className="nav-button">
                   <div className="nav-center-circle"></div>
                   <div className="nav-button-vertical" onClick={handleButton} />
-                  <div className="nav-button-horizontal">
+                  <div
+                    className="nav-button-horizontal"
+                    onClick={handleHButton}
+                  >
                     <div className="border-top"></div>
                     <div className="border-bottom"></div>
                   </div>
@@ -217,24 +314,72 @@ const PokeDex = (): JSX.Element => {
           {/*  Top screen */}
           <div className="top-screen-container">
             <div id="about-screen" className="right-panel-screen">
-              {'Height:'} {pokemon?.height ? pokemon?.height + 'cm' : '-'}
-              <br />
-              {'Weight:'} {pokemon?.weight ? pokemon?.weight + 'kg' : '-'}
+              {aboutScreen()}
             </div>
           </div>
           {/*  Blue Buttons */}
           <div className="square-buttons-container">
             <div className="blue-squares-container">
-              <div className="blue-square">A</div>
-              <div className="blue-square">B</div>
-              <div className="blue-square">C</div>
-              <div className="blue-square">D</div>
-              <div className="blue-square">E</div>
-              <div className="blue-square">0</div>
-              <div className="blue-square">1</div>
-              <div className="blue-square">2</div>
-              <div className="blue-square">3</div>
-              <div className="blue-square">4</div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(0)}
+              >
+                {searchButton(0, searchMode)}
+              </div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(1)}
+              >
+                {searchButton(1, searchMode)}
+              </div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(2)}
+              >
+                {searchButton(2, searchMode)}
+              </div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(3)}
+              >
+                {searchButton(3, searchMode)}
+              </div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(4)}
+              >
+                {searchButton(4, searchMode)}
+              </div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(5)}
+              >
+                0
+              </div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(6)}
+              >
+                1
+              </div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(7)}
+              >
+                2
+              </div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(8)}
+              >
+                3
+              </div>
+              <div
+                className="blue-square"
+                onClick={() => handleSearchButton(9)}
+              >
+                4
+              </div>
             </div>
           </div>
           {/*  Center Buttons */}
@@ -249,14 +394,24 @@ const PokeDex = (): JSX.Element => {
                 </div>
               </div>
               <div className="white-squares-container">
-                <div className="white-square"></div>
-                <div className="white-square"></div>
+                <div className="white-square" onClick={showSearch}>
+                  Search
+                </div>
+                <div className="white-square" onClick={clearSearch}>
+                  Clear
+                </div>
               </div>
             </div>
             <div className="center-right-container">
               <div className="thin-buttons-container">
-                <div className="thin-button"></div>
-                <div className="thin-button"></div>
+                <div
+                  className="thin-button"
+                  onClick={handleLeftSearchButton}
+                ></div>
+                <div
+                  className="thin-button"
+                  onClick={handleRightSearchButton}
+                ></div>
               </div>
               <div className="yellow-button yellow">
                 <div className="big-dot light-yellow"></div>

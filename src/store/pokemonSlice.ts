@@ -36,7 +36,7 @@ export const pokemonSlice = createSlice({
       state.currentPokemon = action.payload;
     },
     setNewPokemon: (state, action) => {
-      state.data?.results.push(action.payload);
+      state.data?.results.concat(action.payload);
     },
   },
 });

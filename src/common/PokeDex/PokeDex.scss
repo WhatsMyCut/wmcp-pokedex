@@ -274,6 +274,7 @@
   height: 12px;
   width: 52px;
   border: 2px solid black;
+  cursor: pointer;
 }
 
 .nav-button-horizontal {
@@ -283,6 +284,7 @@
   height: 12px;
   width: 52px;
   border: 2px solid black;
+  cursor: pointer;
 }
 
 .nav-center-circle {
@@ -404,11 +406,10 @@
   border: black 1.5px solid;
   background-color: var(--square-buttons-color);
   box-shadow: inset -2px -2px #3298cb;
-  & > :hover {
-    cursor: pointer;
-  }
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
+  z-index: 5;
+  cursor: pointer;
 }
 
 /* center buttons */
@@ -456,6 +457,9 @@
   box-shadow: inset -2px -2px gray;
   font-size: 11px;
   text-align: center;
+  vertical-align: baseline;
+  z-index: 5;
+  cursor: pointer;
 }
 
 .center-right-container {
@@ -473,6 +477,8 @@
   border: 2px solid black;
   background-color: var(--main-buttons-color);
   margin-left: 10px;
+  z-index: 5;
+  cursor: pointer;
 }
 .yellow-button {
   justify-self: end;
