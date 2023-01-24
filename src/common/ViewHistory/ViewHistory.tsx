@@ -13,7 +13,14 @@ const ViewHistory = (): JSX.Element => {
   return (
     <>
       <div className="header">View History</div>
-      <div className="view-history">{JSON.stringify(history)}</div>
+      <div className="view-history">
+        {history.map((v) => (
+          <div key={v.name}>
+            {v.name}
+            <br />
+          </div>
+        ))}
+      </div>
     </>
   );
 };
