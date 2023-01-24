@@ -2,7 +2,7 @@
 
 /* poke-dex */
 #pokedex {
-  height: 465px;
+  height: 345px;
   width: calc(228px * 2);
   display: flex;
   border-radius: 10px;
@@ -39,7 +39,7 @@
 .left-svg {
   position: absolute;
   z-index: +5;
-  left: 120px;
+  left: 140px;
 }
 
 .big-light-border {

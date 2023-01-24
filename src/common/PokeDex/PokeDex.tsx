@@ -10,18 +10,26 @@ import {
 import { searchButton } from './utils';
 import './PokeDex.scss';
 
+enum Screen {
+  Search = 'search',
+  SearchResults = 'searchresults',
+  Abilities = 'abilities',
+  Moves = 'moves',
+  Default = 'default',
+}
+
 const PokeDex = (): JSX.Element => {
   const api = new PokemonClient();
   const dispatch = useAppDispatch();
   const selected = useAppSelector((state) => state.pokemon.selected);
   const data = useAppSelector((state) => state.pokemon.data);
   const isLoading = useRef<boolean>(true);
-  const [displayScreen, setDisplayScreen] = useState<
-    'search' | 'searchresults' | 'abilities' | 'moves' | 'default'
-  >('default');
+  const [displayScreen, setDisplayScreen] = useState<Screen>(Screen.Default);
   const [searchMode, setSearchMode] = useState<number>(0);
   const [pokemon, setPokemon] = useState<Pokemon | undefined>(undefined);
   const [searchString, setSearchString] = useState<string>('');
+  const [movesIndex, setMovesIndex] = useState<number>(0);
+  const [abilitiesIndex, setAbilitiesIndex] = useState<number>(0);
 
   const setBGImage = (imgSrc: string | null) => {
     document.documentElement.style.setProperty('--main-bg-image', imgSrc || '');
@@ -67,35 +75,96 @@ const PokeDex = (): JSX.Element => {
   };
 
   const handleButton = (event: React.MouseEvent) => {
-    if (event.clientY < 389) {
-      handleUpKey();
+    if (event.clientY < 290) {
+      // console.log('up', { event });
+      switch (displayScreen) {
+        case Screen.Moves:
+          if (pokemon?.moves && movesIndex + 1 <= pokemon?.moves.length - 1) {
+            setMovesIndex(movesIndex + 1);
+          } else {
+            setMovesIndex(0);
+          }
+          break;
+        case Screen.Abilities:
+          if (
+            pokemon?.abilities &&
+            abilitiesIndex + 1 <= pokemon?.abilities.length - 1
+          ) {
+            setAbilitiesIndex(abilitiesIndex + 1);
+          } else {
+            setAbilitiesIndex(0);
+          }
+          break;
+        default:
+          break;
+      }
     }
-    if (event.clientY > 415) {
-      handleDownKey();
+    if (event.clientY > 310) {
+      // console.log('down', { event });
+      switch (displayScreen) {
+        case Screen.Moves:
+          if (movesIndex - 1 >= 0) {
+            setMovesIndex(movesIndex - 1);
+          }
+          break;
+        case Screen.Abilities:
+          if (abilitiesIndex - 1 >= 0) {
+            setAbilitiesIndex(abilitiesIndex - 1);
+          }
+          break;
+        default:
+          break;
+      }
     }
   };
 
   const handleHButton = (event: React.MouseEvent) => {
-    if (event.clientX < 440) {
-      console.log('left');
+    if (event.clientX < 315) {
+      switch (displayScreen) {
+        case Screen.Default:
+          setDisplayScreen(Screen.Abilities);
+          break;
+        case Screen.Abilities:
+          setAbilitiesIndex(0);
+          setDisplayScreen(Screen.Moves);
+          break;
+        case Screen.Moves:
+          setMovesIndex(0);
+          setDisplayScreen(Screen.Default);
+          break;
+      }
+      // console.log('left', { displayScreen });
     }
-    if (event.clientX > 460) {
-      console.log('right');
+    if (event.clientX > 335) {
+      switch (displayScreen) {
+        case Screen.Default:
+          setDisplayScreen(Screen.Moves);
+          break;
+        case Screen.Abilities:
+          setDisplayScreen(Screen.Default);
+          break;
+        case Screen.Moves:
+          setDisplayScreen(Screen.Abilities);
+          break;
+      }
+      // console.log('right', { displayScreen });
     }
   };
 
+  const handleCircleButton = (event: React.MouseEvent) => {
+    // console.log('select', { event });
+  };
+
   const showSearch = () => {
-    console.log('showSearch');
     if (displayScreen === 'search') {
-      setDisplayScreen('searchresults');
+      setDisplayScreen(Screen.SearchResults);
     } else {
-      setDisplayScreen('search');
+      setDisplayScreen(Screen.Search);
     }
   };
 
   const clearSearch = () => {
-    console.log('clearSearch');
-    setDisplayScreen('default');
+    setDisplayScreen(Screen.Default);
     setSearchString('');
   };
 
@@ -115,7 +184,6 @@ const PokeDex = (): JSX.Element => {
     if (displayScreen !== 'search') return;
     const letter = searchButton(index, searchMode);
     const ss = searchString || '';
-    console.log({ letter, ss });
     setSearchString(ss + letter?.toLowerCase());
   };
 
@@ -152,17 +220,41 @@ const PokeDex = (): JSX.Element => {
     );
   };
 
+  const movesScreen = () => {
+    return (
+      <>
+        {'Moves:'}
+        <br />
+        {!pokemon?.moves && '-'}
+        {pokemon?.moves[movesIndex] && pokemon?.moves[movesIndex].move.name}
+      </>
+    );
+  };
+
+  const abilitiesScreen = () => {
+    return (
+      <>
+        {'Abilities:'}
+        <br />
+        {!pokemon?.abilities && '-'}
+        {pokemon?.abilities[abilitiesIndex] &&
+          pokemon?.abilities[abilitiesIndex].ability.name}
+      </>
+    );
+  };
+
   const aboutScreen = () => {
     switch (displayScreen) {
       case 'search':
         return searchScreen();
-        break;
       case 'searchresults':
         return searchResultsScreen();
-        break;
+      case 'moves':
+        return movesScreen();
+      case 'abilities':
+        return abilitiesScreen();
       default:
         return defaultScreen();
-        break;
     }
   };
 
@@ -273,7 +365,10 @@ const PokeDex = (): JSX.Element => {
               </div>
               <div className="right-nav-container">
                 <div className="nav-button">
-                  <div className="nav-center-circle"></div>
+                  <div
+                    className="nav-center-circle"
+                    onClick={handleCircleButton}
+                  ></div>
                   <div className="nav-button-vertical" onClick={handleButton} />
                   <div
                     className="nav-button-horizontal"
